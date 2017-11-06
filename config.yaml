@@ -1,0 +1,5 @@
+HTTP_PORT : 8081
+HTTP_HOST :
+PROXY_URL : http://mirror.centos.org/centos/
+PROXY_SUFFIX : /proxy
+DATA_DIR : ./cache

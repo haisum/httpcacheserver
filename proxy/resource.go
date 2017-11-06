@@ -38,6 +38,7 @@ func (rs *resource) getRemoteLastModified() (time.Time, int, error) {
 	if err != nil {
 		return time.Time{}, resp.StatusCode, err
 	}
+	defer resp.Body.Close()
 	log.Infof("Status code %d", resp.StatusCode)
 	rs.Header = resp.Header
 	log.Infof("Got headers %+v", rs.Header)
@@ -51,6 +52,9 @@ func (rs *resource) getRemote() (io.ReadCloser, int, error) {
 	defer d.remove(rs.URL)
 	log.WithField("url", rs.URL).Info("Getting remote file")
 	resp, err := http.Get(rs.URL)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil || resp.StatusCode != http.StatusOK {
 		return nil, resp.StatusCode, err
 	}
@@ -84,6 +88,7 @@ func (rs *resource) saveLocal(r io.ReadCloser) error {
 	}
 	defer file.Close()
 	b, err := ioutil.ReadAll(r)
+	defer r.Close()
 	if err != nil {
 		return err
 	}

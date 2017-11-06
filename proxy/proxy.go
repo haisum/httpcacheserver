@@ -21,7 +21,7 @@ var (
 // New server will start serving {url} on {host}:{port}/suffix. All cache will be saved in {dir}
 // This function blocks unless an error occurred.
 func Start(url, suffix, dir, host string, port int) error {
-	if proxyURL == "" || dataDir == "" {
+	if url == "" || dir == "" {
 		return errors.New("proxyURL and dataDir are required parameters and can't be blank.")
 	}
 	proxyURL = url

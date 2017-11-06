@@ -18,6 +18,8 @@ Building
 
 `go build -o httpcacheserver main.go`
 
+If you don't have go installed, you can download pre-compiled binaries from releases tab on Github.com
+
 Executing
 -------------
 

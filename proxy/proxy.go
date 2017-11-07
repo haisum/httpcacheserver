@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 )
@@ -46,14 +45,13 @@ func Start(url, suffix, dir, host string, port int) error {
 		for key, val := range h {
 			header[key] = val
 		}
-		b, err := ioutil.ReadAll(reader)
+		_, err = io.Copy(w, reader)
 		defer reader.Close()
 		if err != nil {
 			log.WithError(err).Error("Error occurred")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
-		w.Write(b)
 	})
 	return http.ListenAndServe(
 		fmt.Sprintf("%s:%d", host, port),

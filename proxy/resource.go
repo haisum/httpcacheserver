@@ -4,7 +4,6 @@ import (
 	"errors"
 	log "github.com/Sirupsen/logrus"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -78,21 +77,14 @@ func (rs *resource) getLocal() (io.ReadCloser, int, error) {
 // saveLocal saves a reader (usually response body) in local file
 // saved file's last modified time is same as remote file's last-modified header.
 func (rs *resource) saveLocal(r io.ReadCloser) error {
+	defer r.Close()
 	err := os.MkdirAll(filepath.Dir(rs.Path), 0711)
 	if err != nil {
 		return err
 	}
 	file, err := os.Create(rs.Path)
-	if err != nil {
-		return err
-	}
 	defer file.Close()
-	b, err := ioutil.ReadAll(r)
-	defer r.Close()
-	if err != nil {
-		return err
-	}
-	_, err = file.Write(b)
+	_, err = io.Copy(file, r)
 	if err == nil {
 		file.Close()
 		log.Infof("Setting last modified to %s", rs.RemoteModified.String())
